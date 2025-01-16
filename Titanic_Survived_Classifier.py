@@ -12,8 +12,8 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 
 # Data Importing
-train_df = pd.read_csv('/kaggle/input/titanic/test.csv')
-test_df = pd.read_csv('/kaggle/input/titanic/train.csv')
+train_df = pd.read_csv('/kaggle/input/titanic/train.csv')
+test_df = pd.read_csv('/kaggle/input/titanic/test.csv')
 
 
 ## Data Inspection Training dataset
