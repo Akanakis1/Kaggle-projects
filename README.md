@@ -20,7 +20,7 @@ It is your job to predict these outcomes. For each passenger in the test set, us
 We also include gender_submission.csv, a set of predictions that assume all and only female passengers survive, as an example of what a submission file should look like.
 
 # Data Dictionary
-## Variable	Definition	Key
+## Variable Definition Key
 
 PassengerId: Unique ID Number of People
 Survived: 0 = No, 1 = Yes
@@ -30,9 +30,9 @@ Age: Age in years
 SibSp:	# of siblings/spouses aboard the Titanic
 Parch:	# of parents/children aboard the Titanic
 Ticket:	Ticket number
-Fare:	Passenger fare
-Cabin:	Cabin number
-Embarked:	(Port of) Embarkation	C = Cherbourg, Q = Queenstown, S = Southampton
+Fare: Passenger fare
+Cabin: Cabin number
+Embarked: (Port of) Embarkation C = Cherbourg, Q = Queenstown, S = Southampton
 
 ## Variable Notes
 Pclass: A proxy for socio-economic status (SES)
