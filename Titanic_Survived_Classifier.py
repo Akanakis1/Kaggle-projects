@@ -16,7 +16,7 @@ train_df = pd.read_csv('/kaggle/input/titanic/test.csv')
 test_df = pd.read_csv('/kaggle/input/titanic/train.csv')
 
 
-# # Data Inspection Training dataset
+## Data Inspection Training dataset
 print('Train dataset:')
 print(train_df.head()) # Display the first 5 rows of the train dataset
 print('_____________________________________________')
@@ -33,7 +33,7 @@ print('_____________________________________________')
 print('Missing values in train dataset:', train_df.isnull().sum()) # Check the missing values in the dataset
 print('_____________________________________________')
 
-# Data Inspection Testing dataset
+## Data Inspection Testing dataset
 print('Test dataset:')
 print(test_df.head()) # Display the first 5 rows of the test dataset
 print('_____________________________________________')
@@ -78,7 +78,7 @@ print(train_df.groupby('Fare')['Survived'].value_counts())
 print('_____________________________________________')
 
 
-# Exploratory Data Analysis Visualization - EDA Visualization
+## Exploratory Data Analysis Visualization - EDA Visualization
 # Check the people who survived
 fig, axes = plt.subplots(1, 2, figsize=(12, 6))
 # Countplot for people who survived
@@ -129,14 +129,14 @@ plt.show()
 
 
 # Data Preprocessing
-# Fill in the missing values for the Training dataset
+## Fill in the missing values for the Training dataset
 train_df['Age'] = train_df['Age'].interpolate(method='linear')
 train_df['Sex'] = train_df['Sex'].map({'male': 0, 'female': 1})
 train_df = train_df.dropna(subset=['Embarked'])
 print('Missing values in train dataset:', train_df.isna().sum()) # Check the missing values in the Training dataset
 print('_____________________________________________')
 
-# Fill the missing values for Testist dataset
+## Fill the missing values for Testist dataset
 test_df['Age'] = test_df['Age'].interpolate(method='linear')
 test_df['Fare'] = test_df['Fare'].interpolate(method='linear')
 test_df['Sex'] = test_df['Sex'].map({'male': 0, 'female': 1})
@@ -144,7 +144,7 @@ print('Missing values in test dataset:', test_df.isna().sum()) # Check the missi
 print('_____________________________________________')
 
 
-# Correlation Visualization
+## Correlation Visualization
 correlation = train_df[['Survived', 'Sex', 'Pclass', 'Fare', 'Parch', 'Age', 'SibSp']].corr() # Compute the correlation matrix
 # Create a figure heatmap for Correlation
 fig, axes = plt.subplots(1, figsize=(16, 6))
@@ -153,7 +153,7 @@ axes.set_title('Correlation between the variables', fontsize=16, fontweight='bol
 plt.tight_layout()
 plt.show()
 
-# Covariance Visualization
+## Covariance Visualization
 covariance = train_df[['Survived', 'Sex', 'Pclass', 'Fare', 'Parch', 'Age', 'SibSp']].cov() # Compute the covariance matrix
 # Create a figure heatmap for Covariance
 fig, axes = plt.subplots(1, figsize=(16, 6))
@@ -164,7 +164,7 @@ plt.show()
 
 
 # Create Machine Learning Model
-features = ['Sex', 'Pclass', 'Fare', 'Parch',' Age', 'SibSp'] # Features for model
+features = ['Sex', 'Pclass', 'Fare', 'Parch', 'Age', 'SibSp'] # Features for model
 X = train_df[features]
 y = train_df['Survived']
 
