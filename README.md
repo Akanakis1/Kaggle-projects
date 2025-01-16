@@ -1,4 +1,5 @@
-# Titanic - Machine Learning from Disaster | Data Taken from: https://www.kaggle.com/competitions/titanic
+# Titanic - Machine Learning from Disaster 
+### Data Taken from: https://www.kaggle.com/competitions/titanic
 
 ## Kaggle-projects
 
