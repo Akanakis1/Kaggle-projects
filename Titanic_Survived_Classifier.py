@@ -1,14 +1,10 @@
 # Import Libraries
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from sklearn.svm import SVC
-from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 
 # Data Importing
@@ -60,6 +56,7 @@ print(train_df.groupby('Pclass')['Survived'].value_counts())
 print('_____________________________________________')
 print('Distribution of the target variable with respect to Embarked:') # Check the people who survived by Embarked
 print(train_df.groupby('Embarked')['Survived'].value_counts())
+train_df['Embarked'] = train_df['Embarked'].astype('category')
 print('_____________________________________________')
 print('Distribution of the target variable with respect to Sex:') # Check the people who survived by Sex
 print(train_df.groupby('Sex')['Survived'].value_counts())
@@ -95,37 +92,37 @@ plt.tight_layout()
 plt.show()
 
 # Countplot for people who survived by Pclass
-fig, axes = plt.subplots(1,figsize=(12, 6))
+fig, ax = plt.subplots(1, figsize=(12, 6))
 sns.countplot(x='Pclass', hue='Survived', data=train_df, palette=['red', 'blue'])
-axes.set_ylabel('People', fontsize=14, color='black', fontweight='bold', fontname='Times New Roman')
-axes.set_xlabel('Pclass', fontsize=14, color='black', fontweight='bold', fontname='Times New Roman')
-axes.set_xticklabels(['1st class', '2nd class', '3rd class'], fontsize=12, fontname='Times New Roman')
-axes.set_title('Countplot for Survived People by Pclass', fontsize=16, fontweight='bold', fontname='Times New Roman')
-axes.legend(['Died', 'Survived'], title='People', loc='upper right')
+ax.set_xlabel('Pclass', fontsize=14, color='black', fontweight='bold', fontname='Times New Roman')
+ax.set_xticklabels(['1st class', '2nd class', '3rd class'], fontsize=12, fontname='Times New Roman')
+ax.set_title('Countplot for Survived People by Pclass', fontsize=16, fontweight='bold', fontname='Times New Roman')
+ax.legend(['Died', 'Survived'], title='People', loc='upper right')
 plt.tight_layout()
 plt.show()
 
 # Countplot for people who survived by Embarked
-fig, axes = plt.subplots(1, figsize=(12, 6))
+fig, ax = plt.subplots(1, figsize=(12, 6))
 sns.countplot(x='Embarked', hue='Survived', data=train_df, palette=['red', 'blue'])
-axes.set_ylabel('People', fontsize=14, color='black', fontweight='bold', fontname='Times New Roman')
-axes.set_xlabel('Embarked', fontsize=14, color='black', fontweight='bold', fontname='Times New Roman')
-axes.set_xticklabels(['Cherbourg', 'Queenstown', 'Southampton'], fontsize=12, fontname='Times New Roman')
-axes.set_title('Countplot for Survived People by Embarked', fontsize=16, fontweight='bold', fontname='Times New Roman')
-axes.legend(['Died', 'Survived'], title='People', loc='upper right')
+ax.set_ylabel('People', fontsize=14, color='black', fontweight='bold', fontname='Times New Roman')
+ax.set_xlabel('Embarked', fontsize=14, color='black', fontweight='bold', fontname='Times New Roman')
+ax.set_xticklabels(['Cherbourg', 'Queenstown', 'Southampton'], fontsize=12, fontname='Times New Roman')
+ax.set_title('Countplot for Survived People by Embarked', fontsize=16, fontweight='bold', fontname='Times New Roman')
+ax.legend(['Died', 'Survived'], title='People', loc='upper right')
 plt.tight_layout()
 plt.show()
 
 # Countplot for people who survived by Sex
-fig, axes = plt.subplots(1, figsize=(12, 6))
+fig, ax = plt.subplots(1, figsize=(12, 6))
 sns.countplot(x='Sex', hue='Survived', data=train_df, palette=['red', 'blue'])
-axes.set_ylabel('People', fontsize=14, color='black', fontweight='bold', fontname='Times New Roman')
-axes.set_xlabel('Sex', fontsize=14, color='black', fontweight='bold', fontname='Times New Roman')
-axes.set_xticklabels(['Male', 'Female'], fontsize=12, fontname='Times New Roman')
-axes.set_title('Countplot for Survived People by Sex', fontsize=16, fontweight='bold', fontname='Times New Roman')
-axes.legend(['Died', 'Survived'], title='People', loc='upper right')
+ax.set_ylabel('People', fontsize=14, color='black', fontweight='bold', fontname='Times New Roman')
+ax.set_xlabel('Sex', fontsize=14, color='black', fontweight='bold', fontname='Times New Roman')
+ax.set_xticklabels(['Male', 'Female'], fontsize=12, fontname='Times New Roman')
+ax.set_title('Countplot for Survived People by Sex', fontsize=16, fontweight='bold', fontname='Times New Roman')
+ax.legend(['Died', 'Survived'], title='People', loc='upper right')
 plt.tight_layout()
 plt.show()
+
 
 
 # Data Preprocessing
@@ -136,7 +133,7 @@ train_df = train_df.dropna(subset=['Embarked'])
 print('Missing values in train dataset:', train_df.isna().sum()) # Check the missing values in the Training dataset
 print('_____________________________________________')
 
-## Fill the missing values for Testist dataset
+## Fill the missing values for Testing dataset
 test_df['Age'] = test_df['Age'].interpolate(method='linear')
 test_df['Fare'] = test_df['Fare'].interpolate(method='linear')
 test_df['Sex'] = test_df['Sex'].map({'male': 0, 'female': 1})
@@ -172,12 +169,9 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 
 # Define the models
 models = {
-    'Logistic Regression': LogisticRegression(max_iter=1000),
-    'Decision Tree': DecisionTreeClassifier(),
-    'Random Forest': RandomForestClassifier(),
+    'Logistic Regression': LogisticRegression(),
+    'AdaBoost': AdaBoostClassifier(),
     'Gradient Boosting': GradientBoostingClassifier(),
-    'Support Vector Machine': SVC(probability=True),
-    'K-Nearest Neighbors': KNeighborsClassifier()
 }
 # Train and evaluate each model
 results = {}
@@ -199,8 +193,10 @@ for model_name, metrics in results.items():
         print(f"{metric_name}: {metric_value:.4f}")
     print('_____________________________________________')
 # Select the best model based on the evaluation metrics
-best_model = RandomForestClassifier()  # Replace with your best model
+best_model_name = max(results, key=lambda x: results[x]['ROC AUC'])
+best_model = models[best_model_name]
 best_model.fit(X_train, y_train)
+print(f"Best model selected: {best_model_name}")
 
 
 # Testing Model
