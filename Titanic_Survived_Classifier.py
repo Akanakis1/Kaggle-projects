@@ -1,5 +1,3 @@
-# Titanic Survived Classifier
-
 # Import Libraries
 import pandas as pd
 import numpy as np
@@ -81,7 +79,7 @@ print('_____________________________________________')
 
 
 # Exploratory Data Analysis Visualization - EDA Visualization
-# Check the distribution of the target variable
+# Check the people who survived
 fig, axes = plt.subplots(1, 2, figsize=(12, 6))
 # Countplot for people who survived
 sns.countplot(x='Survived', data=train_df, palette=['red', 'blue'], ax=axes[0])
@@ -93,7 +91,6 @@ axes[0].set_title('Countplot for Survived People', fontsize=16, fontweight='bold
 train_df['Survived'].value_counts().plot.pie(autopct='%1.1f%%', colors=['red', 'blue'], labels=['Died', 'Survived'], ax=axes[1])
 axes[1].set_ylabel('')
 axes[1].set_title('Pie chart for Survived People', fontsize=16, fontweight='bold', fontname='Times New Roman')
-# Adjust layout
 plt.tight_layout()
 plt.show()
 
@@ -105,7 +102,6 @@ axes.set_xlabel('Pclass', fontsize=14, color='black', fontweight='bold', fontnam
 axes.set_xticklabels(['1st class', '2nd class', '3rd class'], fontsize=12, fontname='Times New Roman')
 axes.set_title('Countplot for Survived People by Pclass', fontsize=16, fontweight='bold', fontname='Times New Roman')
 axes.legend(['Died', 'Survived'], title='People', loc='upper right')
-# Adjust layout
 plt.tight_layout()
 plt.show()
 
@@ -117,7 +113,6 @@ axes.set_xlabel('Embarked', fontsize=14, color='black', fontweight='bold', fontn
 axes.set_xticklabels(['Cherbourg', 'Queenstown', 'Southampton'], fontsize=12, fontname='Times New Roman')
 axes.set_title('Countplot for Survived People by Embarked', fontsize=16, fontweight='bold', fontname='Times New Roman')
 axes.legend(['Died', 'Survived'], title='People', loc='upper right')
-# Adjust layout
 plt.tight_layout()
 plt.show()
 
@@ -129,7 +124,6 @@ axes.set_xlabel('Sex', fontsize=14, color='black', fontweight='bold', fontname='
 axes.set_xticklabels(['Male', 'Female'], fontsize=12, fontname='Times New Roman')
 axes.set_title('Countplot for Survived People by Sex', fontsize=16, fontweight='bold', fontname='Times New Roman')
 axes.legend(['Died', 'Survived'], title='People', loc='upper right')
-# Adjust layout
 plt.tight_layout()
 plt.show()
 
@@ -139,43 +133,38 @@ plt.show()
 train_df['Age'] = train_df['Age'].interpolate(method='linear')
 train_df['Sex'] = train_df['Sex'].map({'male': 0, 'female': 1})
 train_df = train_df.dropna(subset=['Embarked'])
-# Check the missing values in the dataset
-print('Missing values in train dataset:', train_df.isna().sum())
+print('Missing values in train dataset:', train_df.isna().sum()) # Check the missing values in the Training dataset
 print('_____________________________________________')
 
 # Fill the missing values for Testist dataset
 test_df['Age'] = test_df['Age'].interpolate(method='linear')
 test_df['Fare'] = test_df['Fare'].interpolate(method='linear')
 test_df['Sex'] = test_df['Sex'].map({'male': 0, 'female': 1})
-# Check the missing values in the dataset
-print('Missing values in test dataset:', test_df.isna().sum())
+print('Missing values in test dataset:', test_df.isna().sum()) # Check the missing values in the Testing dataset
 print('_____________________________________________')
 
 
 # Correlation Visualization
-
-correlation = train_df[['Survived', 'Sex','Pclass','Fare','Parch','Age','SibSp']].corr() # Compute the correlation matrix
-# Create a figure heatmap
+correlation = train_df[['Survived', 'Sex', 'Pclass', 'Fare', 'Parch', 'Age', 'SibSp']].corr() # Compute the correlation matrix
+# Create a figure heatmap for Correlation
 fig, axes = plt.subplots(1, figsize=(16, 6))
 sns.heatmap(correlation, annot=True, cmap='coolwarm', fmt='.3f', ax=axes)
 axes.set_title('Correlation between the variables', fontsize=16, fontweight='bold', fontname='Times New Roman')
-# Adjust layout
 plt.tight_layout()
 plt.show()
 
 # Covariance Visualization
-covariance = train_df[['Survived', 'Sex','Pclass','Fare','Parch','Age','SibSp']].cov() # Compute the covariance matrix
-# Create a figure heatmap
+covariance = train_df[['Survived', 'Sex', 'Pclass', 'Fare', 'Parch', 'Age', 'SibSp']].cov() # Compute the covariance matrix
+# Create a figure heatmap for Covariance
 fig, axes = plt.subplots(1, figsize=(16, 6))
 sns.heatmap(covariance, annot=True, cmap='coolwarm', fmt='.3f', ax=axes)
 axes.set_title('Covariance between the variables', fontsize=16, fontweight='bold', fontname='Times New Roman')
-# Adjust layout
 plt.tight_layout()
 plt.show()
 
 
 # Create Machine Learning Model
-features = ['Sex','Pclass','Fare','Parch','Age','SibSp'] # Features for model
+features = ['Sex', 'Pclass', 'Fare', 'Parch',' Age', 'SibSp'] # Features for model
 X = train_df[features]
 y = train_df['Survived']
 
@@ -227,10 +216,9 @@ axes.set_xlabel('Sex', fontsize=14, color='black', fontweight='bold', fontname='
 axes.set_xticks([0, 1])
 axes.set_xticklabels(['Male', 'Female'], fontsize=12, fontname='Times New Roman')
 axes.set_title('Classification Survival by Gender', fontsize=16, fontweight='bold', fontname='Times New Roman')
-# Adjust layout
 plt.tight_layout()
 plt.show()
 
-# Save the DataFrame to a CSV file
-submission.to_csv('submission.csv', index=False)
+
+submission.to_csv('submission.csv', index=False) # Save the DataFrame to a CSV file
 print("Submission file saved as 'submission.csv'")
