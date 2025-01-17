@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
+from sklearn.ensemble import GradientBoostingClassifier, AdaBoostClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 
 # Data Importing
@@ -112,7 +112,7 @@ ax.legend(['Died', 'Survived'], title='People', loc='upper right')
 plt.tight_layout()
 plt.show()
 
-# Countplot for people who survived by Sex
+# Countplot for people who survived Sex
 fig, ax = plt.subplots(1, figsize=(12, 6))
 sns.countplot(x='Sex', hue='Survived', data=train_df, palette=['red', 'blue'])
 ax.set_ylabel('People', fontsize=14, color='black', fontweight='bold', fontname='Times New Roman')
@@ -127,9 +127,13 @@ plt.show()
 
 # Data Preprocessing
 ## Fill in the missing values for the Training dataset
-train_df['Age'] = train_df['Age'].interpolate(method='linear')
+train_df['Age'] = train_df['Age'].interpolate(method='linear', limit_direction="both", axis=0)
 train_df['Sex'] = train_df['Sex'].map({'male': 0, 'female': 1})
 train_df = train_df.dropna(subset=['Embarked'])
+
+embarked_dummies = pd.get_dummies(train_df['Embarked'], prefix='Embarked')
+train_df = pd.concat([train_df, embarked_dummies], axis=1)
+train_df = train_df.drop('Embarked', axis=1)
 print('Missing values in train dataset:', train_df.isna().sum()) # Check the missing values in the Training dataset
 print('_____________________________________________')
 
@@ -137,31 +141,45 @@ print('_____________________________________________')
 test_df['Age'] = test_df['Age'].interpolate(method='linear')
 test_df['Fare'] = test_df['Fare'].interpolate(method='linear')
 test_df['Sex'] = test_df['Sex'].map({'male': 0, 'female': 1})
+
+embarked_dummies = pd.get_dummies(test_df['Embarked'], prefix='Embarked')
+test_df = pd.concat([test_df, embarked_dummies], axis=1)
+test_df = test_df.drop('Embarked', axis=1)
+
 print('Missing values in test dataset:', test_df.isna().sum()) # Check the missing values in the Testing dataset
 print('_____________________________________________')
 
 
 ## Correlation Visualization
-correlation = train_df[['Survived', 'Sex', 'Pclass', 'Fare', 'Parch', 'Age', 'SibSp']].corr() # Compute the correlation matrix
+correlation = train_df[['Survived', 'Pclass', 'Sex', 'Age', 'SibSp', 'Parch', 'Fare', 'Embarked_C', 'Embarked_Q', 'Embarked_S']].corr() # Compute the correlation matrix
 # Create a figure heatmap for Correlation
-fig, axes = plt.subplots(1, figsize=(16, 6))
-sns.heatmap(correlation, annot=True, cmap='coolwarm', fmt='.3f', ax=axes)
-axes.set_title('Correlation between the variables', fontsize=16, fontweight='bold', fontname='Times New Roman')
+fig, ax = plt.subplots(1, figsize=(16, 6))
+sns.heatmap(correlation, annot=True, cmap='coolwarm', fmt='.3f', ax=ax)
+ax.set_title('Correlation between the variables', fontsize=16, fontweight='bold', fontname='Times New Roman')
+plt.tight_layout()
+plt.show()
+
+## Correlation of the best-fit values Visualization
+correlation = train_df[['Survived', 'Pclass', 'Sex', 'Fare', 'Embarked_C', 'Embarked_S']].corr() # Compute the correlation matrix
+# Create a figure heatmap for Correlation
+fig, ax = plt.subplots(1, figsize=(16, 6))
+sns.heatmap(correlation, annot=True, cmap='coolwarm', fmt='.3f', ax=ax)
+ax.set_title('Correlation between the variables', fontsize=16, fontweight='bold', fontname='Times New Roman')
 plt.tight_layout()
 plt.show()
 
 ## Covariance Visualization
-covariance = train_df[['Survived', 'Sex', 'Pclass', 'Fare', 'Parch', 'Age', 'SibSp']].cov() # Compute the covariance matrix
+covariance = train_df[['Survived', 'Pclass', 'Sex', 'Fare', 'Embarked_C', 'Embarked_S']].cov() # Compute the covariance matrix
 # Create a figure heatmap for Covariance
-fig, axes = plt.subplots(1, figsize=(16, 6))
-sns.heatmap(covariance, annot=True, cmap='coolwarm', fmt='.3f', ax=axes)
-axes.set_title('Covariance between the variables', fontsize=16, fontweight='bold', fontname='Times New Roman')
+fig, ax = plt.subplots(1, figsize=(16, 6))
+sns.heatmap(covariance, annot=True, cmap='coolwarm', fmt='.3f', ax=ax)
+ax.set_title('Covariance between the variables', fontsize=16, fontweight='bold', fontname='Times New Roman')
 plt.tight_layout()
 plt.show()
 
 
 # Create Machine Learning Model
-features = ['Sex', 'Pclass', 'Fare', 'Parch', 'Age', 'SibSp'] # Features for model
+features = ['Pclass', 'Sex', 'Fare', 'Embarked_C', 'Embarked_S'] # Features for model
 X = train_df[features]
 y = train_df['Survived']
 
@@ -204,14 +222,14 @@ test_df['Survived'] = best_model.predict(test_df[features]) # Make predictions o
 submission = test_df[['PassengerId','Survived']] # Create a DataFrame for submission
 
 
-# Create a figure barplot for Survived by Sex for Testing Dataset
-fig, axes = plt.subplots(figsize=(8, 6))
+## Create a figure barplot for Survived by Sex for Testing Dataset
+fig, ax = plt.subplots(figsize=(8, 6))
 sns.barplot(x='Sex', y='Survived', data=test_df, palette=['red', 'blue'])
-axes.set_ylabel('Survival Probability', fontsize=14, color='black', fontweight='bold', fontname='Times New Roman')
-axes.set_xlabel('Sex', fontsize=14, color='black', fontweight='bold', fontname='Times New Roman')
-axes.set_xticks([0, 1])
-axes.set_xticklabels(['Male', 'Female'], fontsize=12, fontname='Times New Roman')
-axes.set_title('Classification Survival by Gender', fontsize=16, fontweight='bold', fontname='Times New Roman')
+ax.set_ylabel('Survival Probability', fontsize=14, color='black', fontweight='bold', fontname='Times New Roman')
+ax.set_xlabel('Sex', fontsize=14, color='black', fontweight='bold', fontname='Times New Roman')
+ax.set_xticks([0, 1])
+ax.set_xticklabels(['Male', 'Female'], fontsize=12, fontname='Times New Roman')
+ax.set_title('Classification Survival by Gender', fontsize=16, fontweight='bold', fontname='Times New Roman')
 plt.tight_layout()
 plt.show()
 
