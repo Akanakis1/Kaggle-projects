@@ -2,6 +2,7 @@
 ### Data Taken from: https://www.kaggle.com/competitions/titanic
 
 ## Kaggle-projects
+https://kaggle.com/code/alexandroskanakis/titanic-survived-classifier
 
 ## Overview
 The data has been split into two groups:
